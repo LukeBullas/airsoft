@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Legion Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+</style>
+</head>
+<body class="w3-light-grey">
+
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+ <span class="w3-bar-item w3-right"><a href="home.html">Legion Airsoft</a></span>
+</div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!--!PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  <header class="w3-container" style="padding-top:22px">
+    <h5><b><i class="fa fa-dashboard"></i> My Dashboard</b></h5>
+  </header>
+
+  <div class="w3-panel">
+    <div class="w3-row-padding" style="margin:0 -16px">
+      
+      <div class="w3-twothird">
+        <h5>Tables</h5>
+        <table class="w3-table w3-striped w3-white" id="feeds-table">
+         <button id="show-bookings-btn">Show Bookings</button>
+<button id="show-users-btn">Show Users</button>
+
+<div id="json-table"></div>
+
+<!-- JavaScript -->
+<script>
+  $(document).ready(function() {
+    // Show Bookings button
+    $('#show-bookings-btn').click(function() {
+      $.ajax({
+      type: 'GET',
+      url: '/api.php/bookingsAll',
+      success: function(data) {
+        var tableHtml = '';
+        $.each(data, function(index, booking) {
+          tableHtml += '<tr>';
+          tableHtml += '<td>' + booking.booking_date + '</td>';
+          tableHtml += '<td>' + booking.booking_time + '</td>';
+          tableHtml += '</tr>';
+        });
+        $('#feeds-table').html(tableHtml);
+      },
+      error: function(xhr, status, error) {
+        alert('Error getting bookings: ' + error);
+      }
+    });
+  });
+
+    // Show Users button
+    $('#show-users-btn').click(function() {
+       $.ajax({
+      type: 'GET',
+      url: '/users.php/usersAll',
+      success: function(data) {
+        $('#user-count').text(data.length);
+      },
+      error: function(xhr, status, error) {
+        alert('Error getting users: ' + error);
+      }
+       });
+      });
+    });
+  });
+</script>
+
+        </table>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <hr>
+
+  <br>
+
+  <!-- Forms -->
+  <div class="w3-container w3-padding-16">
+    <h5>Create User</h5>
+    <form id="create-user-form">
+      <label>Username:</label>
+      <input type="text" id="username" name="username"><br><br>
+      <label>Password:</label>
+      <input type="password" id="password" name="password"><br><br>
+      <button class="w3-button w3-green" id="create-user-btn">Create User</button>
+    </form>
+  </div>
+
+  <div class="w3-container w3-padding-16">
+    <h5>Create Booking</h5>
+    <form id="create-booking-form">
+      <label>Booking Date:</label>
+      <input type="date" id="booking-date" name="booking_date"><br><br>
+      <label>Booking Time:</label>
+      <input type="time" id="booking-time" name="booking_time"><br><br>
+      <button class="w3-button w3-green" id="create-booking-btn">Create Booking</button>
+    </form>
+  </div>
+
+  <div class="w3-container w3-padding-16">
+    <h5>Delete User</h5>
+    <form id="delete-user-form">
+      <label>Username:</label>
+      <input type="text" id="user-id" name="id"><br><br>
+      <button class="w3-button w3-red" id="delete-user-btn">Delete User</button>
+    </form>
+  </div>
+
+  <div class="w3-container w3-padding-16">
+    <h5>Delete Booking</h5>
+    <form id="delete-booking-form">
+      <label>Booking ID:</label>
+      <input type="number" id="booking-id" name="id"><br><br>
+      <button class="w3-button w3-red" id="delete-booking-btn">Delete Booking</button>
+    </form>
+  </div>
+    
+  <script>
+  $(document).ready(function() {
+    // Create User
+    $('#create-user-btn').click(function(event) {
+      event.preventDefault();
+      var username = $('#username').val();
+      var password = $('#password').val();
+      $.ajax({
+        type: 'POST',
+        url: '/api.php/userEntry',
+        data: JSON.stringify({ username: username, password: password }),
+        contentType: 'application/json',
+        success: function(data) {
+          alert('User created successfully!');
+        },
+        error: function(xhr, status, error) {
+          alert('Error creating user: ' + error);
+        }
+      });
+    });
+
+    // Create Booking
+    $('#create-booking-btn').click(function(event) {
+      event.preventDefault();
+      var bookingDate = $('#booking-date').val();
+      var bookingTime = $('#booking-time').val();
+      $.ajax({
+        type: 'POST',
+        url: '/api.php/bookingEntry',
+        data: JSON.stringify({ booking_date: bookingDate, booking_time: bookingTime }),
+        contentType: 'application/json',
+        success: function(data) {
+          alert('Booking created successfully!');
+        },
+        error: function(xhr, status, error) {
+          alert('Error creating booking: ' + error);
+        }
+      });
+    });
+
+    // Delete User
+    $('#delete-user-btn').click(function(event) {
+      event.preventDefault();
+      var userId = $('#user-id').val();
+      $.ajax({
+        type: 'DELETE',
+        url: '/users.php/userDelete',
+        data: JSON.stringify({ id: userId }),
+        contentType: 'application/json',
+        success: function(data) {
+          alert('User deleted successfully!');
+        },
+        error: function(xhr, status, error) {
+          alert('Error deleting user: ' + error);
+        }
+      });
+    });
+
+    // Delete Booking
+    $('#delete-booking-btn').click(function(event) {
+      event.preventDefault();
+      var bookingId = $('#booking-id').val();
+      $.ajax({
+        type: 'DELETE',
+        url: '/users.php/userDelete', // Note: this endpoint seems to be incorrect, should be /api.php/bookingDelete or similar
+        data: JSON.stringify({ id: bookingId }),
+        contentType: 'application/json',
+        success: function(data) {
+          alert('Booking deleted successfully!');
+        },
+        error: function(xhr, status, error) {
+          alert('Error deleting booking: ' + error);
+        }
+      });
+    });
+
+    // Get Users
+    $.ajax({
+      type: 'GET',
+      url: '/users.php/usersAll',
+      success: function(data) {
+        $('#user-count').text(data.length);
+      },
+      error: function(xhr, status, error) {
+        alert('Error getting users: ' + error);
+      }
+    });
+
+    // Get Bookings
+    $.ajax({
+      type: 'GET',
+      url: '/api.php/bookingsAll',
+      success: function(data) {
+        var tableHtml = '';
+        $.each(data, function(index, booking) {
+          tableHtml += '<tr>';
+          tableHtml += '<td>' + booking.booking_date + '</td>';
+          tableHtml += '<td>' + booking.booking_time + '</td>';
+          tableHtml += '</tr>';
+        });
+        $('#feeds-table').html(tableHtml);
+      },
+      error: function(xhr, status, error) {
+        alert('Error getting bookings: ' + error);
+      }
+    });
+  });
+</script>
+</div>
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-64 w3-opacity w3-hover-opacity-off">
+  <p class="w3-hover-text-green">Legion Airsoft York © 2024</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Legion Airsoft York</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1 {font-family: "Lato", sans-serif;}
+body, html {
+  height: 100%;
+  color: #000000;
+  line-height: 1.8;
+  background: #74747443;
+}
+    
+/* Create a Parallax Effect */
+.bgimg{
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Background image */
+.bgimg {
+  background-image: url('images/airsoft6.webp');
+  min-height: 100%;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1600px) {
+  .bgimg {
+    background-attachment: scroll;
+    min-height: 400px;
+  }
+}
+</style>
+</head>  
+    
+<body>
+    <div class="bgimg w3-container w3-center w3-grey" style="padding:128px 16px" id="booking">
+  <h1 class="w3-wide w3-tag">SIGN UP</h1><br>
+  <div class="w3-row-padding" style="margin-top:64px">
+    <div class="w3-container  w3-padding-24 "  id="frm">
+        <form name="f1" class="w3-ul w3-white w3-hover-shadow w3-padding-24" id="signup-form">
+           <p><label class="w3-margin w3-xlarge">Please Input a Username and Password</label><br>
+           <input class="w3-margin" type="text" id="user" placeholder="Username" name="user" /></p>
+           <p><input class="w3-margin" type="password" id="pass" placeholder="Password" name="pass" /></p>
+           <p><input type="submit" id="btn" value="Sign Up" /></p>
+      </form>
+    </div>
+  </div>
+</div>
+    <script>
+  $(document).ready(function() {
+    $('#signup-form').submit(function(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      var user = $('#user').val();
+      var pass = $('#pass').val();
+
+      $.ajax({
+        type: 'POST',
+        url: '/api/signup',
+        data: JSON.stringify({ user: user, pass: pass }),
+        contentType: 'application/json',
+        success: function(data) {
+          if (data.message === 'Sign up successful!') {
+            // Sign up successful, redirect to login page
+            window.location.href = 'login.html';
+          } else {
+            // Sign up failed, display error message
+            alert(data.error);
+          }
+        },
+        error: function(xhr, status, error) {
+          alert('Error: ' + error);
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
+   
